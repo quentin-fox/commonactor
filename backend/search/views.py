@@ -10,6 +10,8 @@ import urllib.parse
 
 tmdb.API_KEY = os.environ.get('TMDB_API_KEY')
 
+SEARCH_FIELDS = ('name', 'id', 'backdrop_path', 'poster_path')
+
 
 @api_view()
 def tmdb_search(response):
@@ -18,7 +20,14 @@ def tmdb_search(response):
         query = response.GET.get('q')
         cleanquery = urllib.parse.quote_plus(query, safe='')
         response = search.tv(query=cleanquery)
-        if len(response['results']) > 0:
-            return Response(response['results'])
+
+        # filters dictionaries in list so they only have the fields of SEARCH_FIELDS
+        slimresponse = [
+            {key: value for key, value in result.items() if key in SEARCH_FIELDS}
+            for result in response['results']
+        ]
+
+        if len(slimresponse) > 0:
+            return Response(slimresponse)
         else:
             return Response({'error': 'No search results'}, status.HTTP_204_NO_CONTENT)

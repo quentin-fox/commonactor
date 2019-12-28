@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     # own
     'search',
+    'common',
 ]
 
 MIDDLEWARE = [

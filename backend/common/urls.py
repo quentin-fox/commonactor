@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import tmdb_common
+from .views import common_actors_view
 
 app_name = 'common'
 
 urlpatterns = [
-    path('', tmdb_common, name='tmdb-common'),
+    path('', common_actors_view, name='tmdb-common'),
 ]
