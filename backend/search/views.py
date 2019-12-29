@@ -10,7 +10,7 @@ import urllib.parse
 
 tmdb.API_KEY = os.environ.get('TMDB_API_KEY')
 
-SEARCH_FIELDS = ('name', 'id', 'backdrop_path', 'poster_path')
+SEARCH_FIELDS = ('name', 'id', 'backdrop_path', 'poster_path', 'first_air_date')
 
 
 @api_view()
@@ -18,6 +18,7 @@ def tmdb_search(response):
     if response.method == 'GET':
         search = tmdb.Search()
         query = response.GET.get('q')
+        limit = int(response.GET.get('limit', None))
         cleanquery = urllib.parse.quote_plus(query, safe='')
         response = search.tv(query=cleanquery)
 
@@ -26,6 +27,10 @@ def tmdb_search(response):
             {key: value for key, value in result.items() if key in SEARCH_FIELDS}
             for result in response['results']
         ]
+
+        if limit and len(slimresponse) > limit:
+            slimresponse = slimresponse[0:limit]
+
 
         if len(slimresponse) > 0:
             return Response(slimresponse)
